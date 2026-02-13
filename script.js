@@ -360,24 +360,23 @@ function renderStocks(stocks) {
     container.innerHTML = "";
 
     stocks.forEach(stock => {
-        const card = document.createElement("div");
-        card.className = "stock-card";
+        const row = document.createElement("div");
+        row.className = "stock-row";
 
-        card.innerHTML = `
-            <div class="stock-title">${stock.symbol}</div>
-            <div class="stock-info">
-                Aktueller Wert: ${stock.price} €<br>
-                Marktkapitalisierung: ${stock.marketCap} Mrd €<br>
-                KGV: ${stock.pe}<br>
-                KBV: ${stock.pb}<br>
-                Dividendenrendite: ${stock.dividend} %<br>
-                Analysten-Bewertung: <span class="rating ${stock.rating}">${stock.rating}</span>
-            </div>
+        row.innerHTML = `
+            <div>${stock.symbol}</div>
+            <div>${stock.price} €</div>
+            <div>${stock.marketCap} Mrd</div>
+            <div>${stock.pe}</div>
+            <div>${stock.pb}</div>
+            <div>${stock.dividend} %</div>
+            <div><span class="rating ${stock.rating}">${stock.rating}</span></div>
         `;
 
-        container.appendChild(card);
+        container.appendChild(row);
     });
 }
+
 
 function renderPagination(totalCount) {
     const el = document.getElementById("pagination");

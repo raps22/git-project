@@ -54,3 +54,63 @@ h1 {
 .buy { color: #4dff88; }
 .neutral { color: #ffd24d; }
 .sell { color: #ff4d4d; }
+
+/* --- Kompakte Tabellenzeilen --- */
+.stock-row {
+  display: grid;
+  grid-template-columns: 120px 100px 120px 80px 80px 120px 100px;
+  padding: 10px 15px;
+  border-bottom: 1px solid #ddd;
+  align-items: center;
+  font-size: 15px;
+}
+
+.stock-row.header {
+  font-weight: bold;
+  background: #f5f5f5;
+  border-top: 2px solid #ccc;
+}
+
+.stock-row:nth-child(even) {
+  background: #fafafa;
+}
+
+/* --- Buttons oben --- */
+#controls button,
+#pagination button {
+  background: #0078ff;
+  border: none;
+  padding: 8px 14px;
+  margin: 4px;
+  border-radius: 6px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+#controls button:hover,
+#pagination button:hover {
+  background: #005fcc;
+}
+
+#controls button.active {
+  background: #003f99;
+}
+
+/* --- Suchfeld --- */
+#search {
+  padding: 10px 14px;
+  width: 260px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 15px;
+  margin-bottom: 10px;
+}
+
+/* --- Summary oben --- */
+#summary {
+  margin: 10px 0 15px 0;
+  font-size: 16px;
+  font-weight: 600;
+}
