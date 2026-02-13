@@ -65,9 +65,21 @@ function chunk(arr, size) {
 
 async function fetchYahooBatch(symbols) {
     const url = `https://corsproxy.io/?https://query1.finance.yahoo.com/v7/finance/quote?symbols=${symbols.join(",")}`;
-    const res = await fetch(url);
-    const data = await res.json();
-    return data.quoteResponse.result;
+
+    try {
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (!data.quoteResponse || !data.quoteResponse.result) {
+            console.warn("Leere Antwort für Batch:", symbols);
+            return [];
+        }
+
+        return data.quoteResponse.result;
+    } catch (err) {
+        console.error("Fehler bei Batch:", symbols, err);
+        return [];
+    }
 }
 
 // ------------------------------------------------------------
@@ -81,7 +93,7 @@ async function loadAllStocks() {
         ...euroStoxxSymbols
     ];
 
-    const batches = chunk(allSymbols, 150);
+    const batches = chunk(allSymbols, 20);
 
     let allResults = [];
 
