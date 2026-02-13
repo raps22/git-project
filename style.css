@@ -1,0 +1,56 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(180deg, #0f0f0f, #1a1a1a);
+    color: #e6e6e6;
+}
+
+header {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+h1 {
+    margin: 0;
+    font-size: 2.5rem;
+    font-weight: 300;
+    color: #ffffff;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.stock-card {
+    background: #1f1f1f;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.4);
+    transition: transform 0.2s ease;
+}
+
+.stock-card:hover {
+    transform: translateY(-3px);
+}
+
+.stock-title {
+    font-size: 1.4rem;
+    margin-bottom: 10px;
+    color: #4da3ff;
+}
+
+.stock-info {
+    line-height: 1.6;
+}
+
+.rating {
+    font-weight: bold;
+}
+
+.buy { color: #4dff88; }
+.neutral { color: #ffd24d; }
+.sell { color: #ff4d4d; }
