@@ -64,7 +64,7 @@ function chunk(arr, size) {
 // ------------------------------------------------------------
 
 async function fetchYahooBatch(symbols) {
-    const url = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${symbols.join(",")}`;
+    const url = `https://corsproxy.io/?https://query1.finance.yahoo.com/v7/finance/quote?symbols=${symbols.join(",")}`;
     const res = await fetch(url);
     const data = await res.json();
     return data.quoteResponse.result;
