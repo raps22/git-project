@@ -308,28 +308,58 @@ stocks.push(
   { symbol: "PEG", price: 58.22, marketCap: 30, pe: 17.1, pb: 1.8, dividend: 3.20, rating: "buy" }
 );
 
-// ------------------------------------------------------------
-// 1) Filter: nur "buy"-Kandidaten
-// ------------------------------------------------------------
-function filterStocks(stocks) {
-    return stocks.filter(s => s.rating === "buy");
+// --- State ---
+let currentPage = 1;
+const pageSize = 20;
+
+let currentSearch = "";
+let currentSort = "pe"; // "pe", "pb", "dividend", "price"
+let currentSortDir = "asc"; // "asc" oder "desc"
+let currentRatingFilter = "buy"; // "all", "buy", "neutral"
+
+function applyFilters(stocks) {
+    return stocks
+        .filter(s => {
+            if (currentRatingFilter !== "all" && s.rating !== currentRatingFilter) return false;
+            if (!currentSearch) return true;
+            const term = currentSearch.toLowerCase();
+            return s.symbol.toLowerCase().includes(term);
+        });
 }
 
-// ------------------------------------------------------------
-// 2) Sortierung: z. B. nach niedrigstem KGV (pe)
-// ------------------------------------------------------------
-function sortStocks(stocks) {
-    return stocks.sort((a, b) => (a.pe || 9999) - (b.pe || 9999));
+function applySort(stocks) {
+    return stocks.sort((a, b) => {
+        const key = currentSort;
+        const av = a[key] ?? 999999;
+        const bv = b[key] ?? 999999;
+        if (av === bv) return 0;
+        return currentSortDir === "asc" ? av - bv : bv - av;
+    });
 }
 
-// ------------------------------------------------------------
-// 3) Rendering ins UI
-// ------------------------------------------------------------
+function paginate(stocks) {
+    const start = (currentPage - 1) * pageSize;
+    return stocks.slice(start, start + pageSize);
+}
+
+function renderSummary(stocks) {
+    const el = document.getElementById("summary");
+    if (!el) return;
+
+    const count = stocks.length;
+    const avgPE = (stocks.reduce((sum, s) => sum + (s.pe || 0), 0) / Math.max(1, stocks.filter(s => s.pe).length)).toFixed(1);
+
+    el.innerHTML = `
+        <div>Gefundene Aktien: <strong>${count}</strong></div>
+        <div>Durchschnittliches KGV: <strong>${isNaN(avgPE) ? "-" : avgPE}</strong></div>
+    `;
+}
+
 function renderStocks(stocks) {
     const container = document.getElementById("stock-container");
     container.innerHTML = "";
 
-    stocks.slice(0, 20).forEach(stock => {
+    stocks.forEach(stock => {
         const card = document.createElement("div");
         card.className = "stock-card";
 
@@ -341,7 +371,7 @@ function renderStocks(stocks) {
                 KGV: ${stock.pe}<br>
                 KBV: ${stock.pb}<br>
                 Dividendenrendite: ${stock.dividend} %<br>
-                Analysten-Bewertung: <span class="rating buy">${stock.rating}</span>
+                Analysten-Bewertung: <span class="rating ${stock.rating}">${stock.rating}</span>
             </div>
         `;
 
@@ -349,14 +379,81 @@ function renderStocks(stocks) {
     });
 }
 
-// ------------------------------------------------------------
-// 4) Hauptfunktion
-// ------------------------------------------------------------
+function renderPagination(totalCount) {
+    const el = document.getElementById("pagination");
+    if (!el) return;
+
+    const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
+    if (currentPage > totalPages) currentPage = totalPages;
+
+    el.innerHTML = `
+        <button id="prev-page" ${currentPage === 1 ? "disabled" : ""}>Zurück</button>
+        <span>Seite ${currentPage} / ${totalPages}</span>
+        <button id="next-page" ${currentPage === totalPages ? "disabled" : ""}>Weiter</button>
+    `;
+
+    document.getElementById("prev-page").onclick = () => {
+        if (currentPage > 1) {
+            currentPage--;
+            updateView();
+        }
+    };
+    document.getElementById("next-page").onclick = () => {
+        if (currentPage < totalPages) {
+            currentPage++;
+            updateView();
+        }
+    };
+}
+
+function updateView() {
+    let data = [...stocks];
+    data = applyFilters(data);
+    data = applySort(data);
+
+    renderSummary(data);
+
+    const pageData = paginate(data);
+    renderStocks(pageData);
+    renderPagination(data.length);
+}
+
+function initEvents() {
+    const searchInput = document.getElementById("search");
+    if (searchInput) {
+        searchInput.addEventListener("input", (e) => {
+            currentSearch = e.target.value;
+            currentPage = 1;
+            updateView();
+        });
+    }
+
+    document.querySelectorAll("[data-sort]").forEach(btn => {
+        btn.addEventListener("click", () => {
+            const key = btn.getAttribute("data-sort");
+            if (currentSort === key) {
+                currentSortDir = currentSortDir === "asc" ? "desc" : "asc";
+            } else {
+                currentSort = key;
+                currentSortDir = "asc";
+            }
+            currentPage = 1;
+            updateView();
+        });
+    });
+
+    document.querySelectorAll("[data-rating]").forEach(btn => {
+        btn.addEventListener("click", () => {
+            currentRatingFilter = btn.getAttribute("data-rating");
+            currentPage = 1;
+            updateView();
+        });
+    });
+}
+
 function init() {
-    const filtered = filterStocks(stocks);
-    const sorted = sortStocks(filtered);
-    renderStocks(sorted);
+    initEvents();
+    updateView();
 }
 
 init();
-

@@ -13,6 +13,29 @@
     <h1>Deine täglichen Aktien-Tipps</h1>
 </header>
 
+<div id="controls">
+  <input id="search" type="text" placeholder="Suche nach Ticker..." />
+
+  <div>
+    Sortieren nach:
+    <button data-sort="pe">KGV</button>
+    <button data-sort="pb">KBV</button>
+    <button data-sort="dividend">Dividende</button>
+    <button data-sort="price">Preis</button>
+  </div>
+
+  <div>
+    Filter Rating:
+    <button data-rating="all">Alle</button>
+    <button data-rating="buy">Buy</button>
+    <button data-rating="neutral">Neutral</button>
+  </div>
+</div>
+
+<div id="summary"></div>
+<div id="stock-container"></div>
+<div id="pagination"></div>
+
 <div class="container" id="stock-container">
     <!-- Die Aktienkarten werden hier eingefügt -->
 </div>
